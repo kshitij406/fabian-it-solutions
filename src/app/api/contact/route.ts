@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getWriteClient } from '@/sanity/lib/write-client'
+import { Resend } from 'resend'
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
@@ -39,6 +39,14 @@ if (typeof setInterval !== 'undefined') {
       }
     }
   }, RATE_LIMIT_WINDOW)
+}
+
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing environment variable: RESEND_API_KEY')
+  }
+  return new Resend(apiKey)
 }
 
 export async function POST(request: Request) {
@@ -118,30 +126,52 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create contact message in Sanity
-    const contactMessage = {
-      _type: 'contactMessage',
-      name: trimmedName,
-      email: trimmedEmail,
-      subject: trimmedSubject,
-      message: trimmedMessage,
-      status: 'new',
-      createdAt: new Date().toISOString(),
-    }
+    // Send email using Resend
+    try {
+      const resend = getResendClient()
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+      const toEmail = 'fabiankivipa@yahoo.com'
 
-    await getWriteClient().create(contactMessage)
+      const emailSubject = trimmedSubject
+        ? `New Contact Form Submission — ${trimmedSubject}`
+        : 'New Contact Form Submission — Fabian IT Solutions'
+
+      const emailBody = `
+New contact form submission from Fabian IT Solutions website:
+
+Name: ${trimmedName}
+Email: ${trimmedEmail}
+${trimmedSubject ? `Subject: ${trimmedSubject}` : ''}
+Timestamp: ${new Date().toISOString()}
+
+Message:
+${trimmedMessage}
+      `.trim()
+
+      await resend.emails.send({
+        from: fromEmail,
+        to: toEmail,
+        subject: emailSubject,
+        text: emailBody,
+        replyTo: trimmedEmail,
+      })
+    } catch (emailError) {
+      console.error('Email sending error:', emailError)
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            emailError instanceof Error && emailError.message.includes('RESEND_API_KEY')
+              ? 'Email service not configured. Please contact support directly.'
+              : 'Failed to send email. Please try again later or contact us directly.',
+        },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ ok: true }, { status: 200 })
   } catch (error) {
     console.error('Contact form error:', error)
-    
-    // Check if it's a missing token error
-    if (error instanceof Error && error.message.includes('SANITY_API_WRITE_TOKEN')) {
-      return NextResponse.json(
-        { ok: false, error: 'Server configuration error. Please contact support.' },
-        { status: 500 }
-      )
-    }
 
     return NextResponse.json(
       { ok: false, error: 'Failed to send message. Please try again later.' },

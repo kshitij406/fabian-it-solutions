@@ -4,7 +4,6 @@ import { sanityFetch } from '@/sanity/lib/fetch'
 import { siteSettingsQuery } from '@/sanity/lib/queries'
 import type { SiteSettings } from '@/sanity/lib/types'
 import type { Metadata } from 'next'
-import { seedSiteSettings } from '@/lib/seed-data'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -16,7 +15,8 @@ export default async function ContactPage() {
     query: siteSettingsQuery,
   }).catch(() => null)
 
-  const settings = siteSettings || seedSiteSettings
+  const phoneNumber = '+255 714 469 423'
+  const email = 'fabiankivipa@yahoo.com'
 
   return (
     <Section>
@@ -37,54 +37,48 @@ export default async function ContactPage() {
               <h2 className="text-2xl font-light tracking-tight">
                 Get in Touch
               </h2>
-              {settings.contact && (
-                <div className="space-y-6">
-                  {settings.contact.email && (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Email
-                      </h3>
-                      <a
-                        href={`mailto:${settings.contact.email}`}
-                        className="text-foreground hover:text-muted-foreground transition-colors"
-                      >
-                        {settings.contact.email}
-                      </a>
-                    </div>
-                  )}
-                  {settings.contact.phone && (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Phone
-                      </h3>
-                      <a
-                        href={`tel:${settings.contact.phone}`}
-                        className="text-foreground hover:text-muted-foreground transition-colors"
-                      >
-                        {settings.contact.phone}
-                      </a>
-                    </div>
-                  )}
-                  {settings.contact.address && (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Address
-                      </h3>
-                      <p className="text-foreground leading-relaxed">
-                        {settings.contact.address}
-                      </p>
-                    </div>
-                  )}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    Email
+                  </h3>
+                  <a
+                    href={`mailto:${email}`}
+                    className="text-foreground hover:text-muted-foreground transition-colors"
+                  >
+                    {email}
+                  </a>
                 </div>
-              )}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    Phone
+                  </h3>
+                  <a
+                    href={`tel:${phoneNumber.replace(/\s/g, '')}`}
+                    className="text-foreground hover:text-muted-foreground transition-colors"
+                  >
+                    {phoneNumber}
+                  </a>
+                </div>
+                {siteSettings?.contact?.address && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Address
+                    </h3>
+                    <p className="text-foreground leading-relaxed">
+                      {siteSettings.contact.address}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-            {settings.socials && settings.socials.length > 0 && (
+            {siteSettings?.socials && siteSettings.socials.length > 0 && (
               <div className="space-y-4">
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Follow Us
                 </h3>
                 <div className="flex flex-wrap gap-6">
-                  {settings.socials.map((social, idx) => (
+                  {siteSettings.socials.map((social, idx) => (
                     <a
                       key={idx}
                       href={social.url}

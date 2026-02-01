@@ -4,31 +4,18 @@ import { Button } from '@/components/ui/button'
 import { Section } from '@/components/Section'
 import { ServiceCard } from '@/components/cards/ServiceCard'
 import { ProjectCard } from '@/components/cards/ProjectCard'
-import { PostCard } from '@/components/cards/PostCard'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import {
   siteSettingsQuery,
   servicesQuery,
   featuredProjectsQuery,
-  testimonialsQuery,
-  postsQuery,
 } from '@/sanity/lib/queries'
 import type {
   SiteSettings,
   Service,
   Project,
-  Testimonial,
-  Post,
 } from '@/sanity/lib/types'
-import { urlFor } from '@/sanity/lib/image'
 import type { Metadata } from 'next'
-import {
-  seedSiteSettings,
-  seedServices,
-  seedProjects,
-  seedTestimonials,
-  seedPosts,
-} from '@/lib/seed-data'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -41,22 +28,17 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
-  const [siteSettings, services, featuredProjects, testimonials, posts] =
+  const [siteSettings, services, featuredProjects] =
     await Promise.all([
       sanityFetch<SiteSettings>({ query: siteSettingsQuery }).catch(() => null),
       sanityFetch<Service[]>({ query: servicesQuery }).catch(() => []),
       sanityFetch<Project[]>({ query: featuredProjectsQuery }).catch(() => []),
-      sanityFetch<Testimonial[]>({ query: testimonialsQuery }).catch(() => []),
-      sanityFetch<Post[]>({ query: postsQuery, revalidate: 60 }).catch(() => []),
     ])
 
-  const settings = siteSettings || seedSiteSettings
-  const displayServices = services.length > 0 ? services : seedServices
-  const displayProjects = featuredProjects.length > 0 ? featuredProjects : seedProjects
-  const displayTestimonials = testimonials.length > 0 ? testimonials : seedTestimonials
-  const displayPosts = posts.length > 0 ? posts : seedPosts
-
-  const recentPosts = displayPosts.slice(0, 3)
+  const settings = siteSettings || {
+    brandName: 'Fabian IT Solutions',
+    description: 'Enterprise-grade IT solutions designed to elevate your business. We deliver secure, scalable systems that drive growth.',
+  }
 
   return (
     <>
@@ -104,7 +86,7 @@ export default async function HomePage() {
       </Section>
 
       {/* Services Preview */}
-      {displayServices.length > 0 && (
+      {services.length > 0 ? (
         <Section id="services" className="bg-muted/30">
           <div className="mb-16 space-y-4 text-center">
             <h2 className="text-4xl font-light tracking-tight md:text-5xl">
@@ -115,11 +97,11 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayServices.slice(0, 6).map((service) => (
+            {services.slice(0, 6).map((service) => (
               <ServiceCard key={service._id} service={service} />
             ))}
           </div>
-          {displayServices.length > 6 && (
+          {services.length > 6 && (
             <div className="mt-12 text-center">
               <Button asChild variant="outline" size="lg">
                 <Link href="/services">View All Services</Link>
@@ -127,10 +109,19 @@ export default async function HomePage() {
             </div>
           )}
         </Section>
+      ) : (
+        <Section id="services" className="bg-muted/30">
+          <div className="space-y-4 text-center">
+            <h2 className="text-4xl font-light tracking-tight md:text-5xl">
+              Our Services
+            </h2>
+            <p className="text-muted-foreground">No services available yet.</p>
+          </div>
+        </Section>
       )}
 
       {/* Featured Projects */}
-      {displayProjects.length > 0 && (
+      {featuredProjects.length > 0 ? (
         <Section id="work">
           <div className="mb-16 space-y-4 text-center">
             <h2 className="text-4xl font-light tracking-tight md:text-5xl">
@@ -141,7 +132,7 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayProjects.map((project) => (
+            {featuredProjects.map((project) => (
               <ProjectCard key={project._id} project={project} />
             ))}
           </div>
@@ -151,84 +142,49 @@ export default async function HomePage() {
             </Button>
           </div>
         </Section>
-      )}
-
-      {/* Testimonials */}
-      {displayTestimonials.length > 0 && (
-        <Section className="bg-muted/30">
-          <div className="mb-16 space-y-4 text-center">
+      ) : (
+        <Section id="work">
+          <div className="space-y-4 text-center">
             <h2 className="text-4xl font-light tracking-tight md:text-5xl">
-              What Our Clients Say
+              Featured Work
             </h2>
-          </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayTestimonials.slice(0, 6).map((testimonial) => (
-              <div
-                key={testimonial._id}
-                className="space-y-4 rounded-lg border border-border/40 bg-card p-8"
-              >
-                {testimonial.avatar && (
-                  <div className="flex items-center gap-4">
-                    <div className="relative h-12 w-12 overflow-hidden rounded-full">
-                      <Image
-                        src={urlFor(testimonial.avatar)
-                          .width(48)
-                          .height(48)
-                          .url()}
-                        alt={testimonial.avatar.alt || testimonial.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="font-medium">{testimonial.name}</p>
-                      {(testimonial.role || testimonial.company) && (
-                        <p className="text-sm text-muted-foreground">
-                          {[testimonial.role, testimonial.company]
-                            .filter(Boolean)
-                            .join(' • ')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
-                <p className="text-muted-foreground leading-relaxed">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                {testimonial.rating && (
-                  <p className="text-sm text-muted-foreground">
-                    {'★'.repeat(testimonial.rating)}
-                  </p>
-                )}
-              </div>
-            ))}
+            <p className="text-muted-foreground">No projects available yet.</p>
           </div>
         </Section>
       )}
 
-      {/* Blog Preview */}
-      {recentPosts.length > 0 && (
-        <Section id="blog">
-          <div className="mb-16 space-y-4 text-center">
-            <h2 className="text-4xl font-light tracking-tight md:text-5xl">
-              Latest from Our Blog
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Insights, updates, and industry news
+      {/* Founder Section */}
+      <Section className="bg-muted/30">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-lg mx-auto lg:mx-0">
+            <Image
+              src="/images/founder/founder.jpg"
+              alt="Fabian Kivipa, Founder"
+              fill
+              className="object-cover"
+            />
+            <div className="gradient-fallback absolute inset-0 -z-10" />
+          </div>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h2 className="text-4xl font-light tracking-tight md:text-5xl">
+                Meet the Founder
+              </h2>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-medium tracking-tight">
+                  Fabian Kivipa
+                </h3>
+                <p className="text-muted-foreground">
+                  Founder, Fabian IT Solutions
+                </p>
+              </div>
+            </div>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              With a passion for technology and a commitment to excellence, Fabian Kivipa founded Fabian IT Solutions to deliver enterprise-grade IT solutions that transform businesses. Combining technical expertise with strategic vision, Fabian leads the team in creating innovative systems that drive growth and efficiency.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {recentPosts.map((post) => (
-              <PostCard key={post._id} post={post} />
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Button asChild variant="outline" size="lg">
-              <Link href="/blog">Read More Articles</Link>
-            </Button>
-          </div>
-        </Section>
-      )}
+        </div>
+      </Section>
 
       {/* CTA Section */}
       <Section className="bg-foreground text-background">

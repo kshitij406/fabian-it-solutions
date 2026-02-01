@@ -42,24 +42,6 @@ export const structure: StructureResolver = (S) =>
             ])
         ),
       S.divider(),
-      // Blog Content Group
-      S.listItem()
-        .title('Blog')
-        .child(
-          S.list()
-            .title('Blog')
-            .items([
-              S.listItem()
-                .title('Posts')
-                .schemaType('post')
-                .child(S.documentTypeList('post').title('Posts')),
-              S.listItem()
-                .title('Authors')
-                .schemaType('author')
-                .child(S.documentTypeList('author').title('Authors')),
-            ])
-        ),
-      S.divider(),
       // Messages Group
       S.listItem()
         .title('Messages')

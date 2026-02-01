@@ -20,7 +20,6 @@ export const seedSiteSettings: SiteSettings = {
     { label: 'Services', href: '/services', blank: false, _type: 'link' },
     { label: 'Work', href: '/work', blank: false, _type: 'link' },
     { label: 'About', href: '/about', blank: false, _type: 'link' },
-    { label: 'Blog', href: '/blog', blank: false, _type: 'link' },
     { label: 'Contact', href: '/contact', blank: false, _type: 'link' },
   ],
   socials: [
@@ -28,8 +27,8 @@ export const seedSiteSettings: SiteSettings = {
     { platform: 'github', url: 'https://github.com/fabian-it' },
   ],
   contact: {
-    email: 'hello@fabianit.com',
-    phone: '+1 (555) 123-4567',
+    email: 'fabiankivipa@yahoo.com',
+    phone: '+255 714 469 423',
   },
 }
 

@@ -20,7 +20,7 @@ const socialLinks = [
   },
   {
     name: "Email",
-    href: "mailto:contact@fabianit.com",
+    href: "mailto:fabiankivipa@yahoo.com",
     icon: Mail,
   },
 ]
@@ -64,12 +64,6 @@ export function Footer() {
                   About
                 </Link>
                 <Link
-                  href="/blog"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Blog
-                </Link>
-                <Link
                   href="/contact"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -78,10 +72,28 @@ export function Footer() {
               </nav>
             </div>
 
-            {/* Social Links */}
+            {/* Contact Info */}
             <div className="space-y-4">
-              <h4 className="text-sm font-medium tracking-tight">Connect</h4>
-              <div className="flex space-x-4">
+              <h4 className="text-sm font-medium tracking-tight">Contact</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>
+                  <a
+                    href="tel:+255714469423"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    +255 714 469 423
+                  </a>
+                </p>
+                <p>
+                  <a
+                    href="mailto:fabiankivipa@yahoo.com"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    fabiankivipa@yahoo.com
+                  </a>
+                </p>
+              </div>
+              <div className="flex space-x-4 pt-2">
                 {socialLinks.map((social) => {
                   const Icon = social.icon
                   return (

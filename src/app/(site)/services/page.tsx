@@ -5,7 +5,6 @@ import { servicesQuery } from '@/sanity/lib/queries'
 import type { Service } from '@/sanity/lib/types'
 import { PortableText } from '@/components/PortableText'
 import type { Metadata } from 'next'
-import { seedServices } from '@/lib/seed-data'
 import Image from 'next/image'
 import { urlFor } from '@/sanity/lib/image'
 
@@ -18,8 +17,6 @@ export default async function ServicesPage() {
   const services = await sanityFetch<Service[]>({ query: servicesQuery }).catch(
     () => []
   )
-
-  const displayServices = services.length > 0 ? services : seedServices
 
   return (
     <>
@@ -36,10 +33,10 @@ export default async function ServicesPage() {
         </div>
       </Section>
 
-      {displayServices.length > 0 ? (
+      {services.length > 0 ? (
         <Section className="bg-muted/30">
           <div className="space-y-24">
-            {displayServices.map((service, idx) => (
+            {services.map((service, idx) => (
               <div
                 key={service._id}
                 id={service.slug.current}
