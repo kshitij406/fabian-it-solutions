@@ -1,0 +1,26 @@
+# Fabian IT Solutions — Cursor Rules
+
+## Non-negotiables
+- Follow existing patterns in this repo. If a pattern exists, reuse it.
+- Prefer server components. Only use "use client" when required (forms, theme toggle, interactive UI).
+- TypeScript strict. No `any` unless there is no reasonable alternative. If used, justify with a short comment.
+- Keep changes minimal and scoped. Avoid unrelated refactors.
+- Never output partial files. When you modify a file, output the full file.
+- If you are unsure, ask targeted questions OR inspect the relevant files first.
+
+## Workflow
+- Always do: PLAN -> IMPLEMENT -> VERIFY.
+- PLAN: produce a short plan with file paths and what will change.
+- IMPLEMENT: apply changes in small batches (ideally 3–8 files per batch).
+- VERIFY: list checks: TypeScript, build, routes, lint, and common runtime pitfalls.
+
+## Next.js / Sanity stack constraints
+- Next.js App Router under `src/app`.
+- CMS content from Sanity via GROQ.
+- Create `src/lib/sanity/{client.ts,queries.ts,types.ts,fetch.ts}` and use typed helpers.
+- Use ISR revalidation where it makes sense.
+- Use shadcn/ui for UI primitives.
+
+## Output format
+- Always show file path headers, then full file contents.
+- End each batch with a short “What changed” and “How to test locally”.
