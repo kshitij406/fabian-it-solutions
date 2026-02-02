@@ -42,7 +42,13 @@ export default async function AboutPage() {
             </div>
           ) : (
             <p className="text-center text-muted-foreground">
-              Content will be added soon.
+              At Fabian IT Solutions, we believe good software starts with clear thinking and strong foundations. Our approach prioritizes clean architecture, transparency, and long-term usability over unnecessary complexity or short-term fixes.
+
+              We specialize in backend systems, APIs, and modern web solutions, building products that are designed to function reliably in real-world environments. Every project is approached with a focus on structure, validation, and scalability, ensuring that systems remain easy to maintain and extend as requirements evolve.
+
+              Rather than offering one-size-fits-all solutions, we take the time to understand each client’s goals and constraints. This allows us to design technology that fits the problem, not the other way around.
+
+              Fabian IT Solutions is driven by a commitment to quality, clarity, and continuous improvement. Whether delivering a small business website or a robust backend service, our goal is always the same: software that works as intended and continues to work as your needs grow.
             </p>
           )}
         </div>
