@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 interface FormState {
   name: string
@@ -86,14 +87,13 @@ export function ContactForm() {
         <label htmlFor="name" className="text-sm font-medium">
           Name <span className="text-destructive">*</span>
         </label>
-        <input
+        <Input
           type="text"
           id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full rounded-md border border-border/40 bg-background px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 
@@ -101,14 +101,13 @@ export function ContactForm() {
         <label htmlFor="email" className="text-sm font-medium">
           Email <span className="text-destructive">*</span>
         </label>
-        <input
+        <Input
           type="email"
           id="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full rounded-md border border-border/40 bg-background px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 
@@ -116,13 +115,12 @@ export function ContactForm() {
         <label htmlFor="subject" className="text-sm font-medium">
           Subject
         </label>
-        <input
+        <Input
           type="text"
           id="subject"
           name="subject"
           value={formData.subject}
           onChange={handleChange}
-          className="w-full rounded-md border border-border/40 bg-background px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 
@@ -130,14 +128,13 @@ export function ContactForm() {
         <label htmlFor="message" className="text-sm font-medium">
           Message <span className="text-destructive">*</span>
         </label>
-        <textarea
+        <Textarea
           id="message"
           name="message"
           value={formData.message}
           onChange={handleChange}
           required
           rows={6}
-          className="w-full rounded-md border border-border/40 bg-background px-4 py-3 text-sm leading-relaxed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         />
       </div>
 

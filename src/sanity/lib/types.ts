@@ -37,6 +37,15 @@ export interface SEO {
   image?: SanityImage
 }
 
+export interface Founder {
+  name: string
+  role: string
+  bio: string
+  image?: SanityImage
+  email?: string
+  linkedin?: string
+}
+
 export interface SiteSettings {
   _id: string
   _type: 'siteSettings'
@@ -48,6 +57,36 @@ export interface SiteSettings {
   footerNav?: NavItem[]
   socials: SocialLink[]
   contact?: ContactInfo
+  seo?: SEO
+}
+
+export interface HomePage {
+  _id: string
+  _type: 'homePage'
+  heroHeadline: string
+  heroSubheadline: string
+  primaryCTA: string
+  primaryCTAHref: string
+  secondaryCTA?: string
+  secondaryCTAHref?: string
+  trustItems?: string[]
+  aboutPreviewTitle: string
+  aboutPreviewBody: string
+  founder: Founder
+  seo?: SEO
+}
+
+export interface AboutPage {
+  _id: string
+  _type: 'aboutPage'
+  headline: string
+  intro?: string
+  body: any // Portable Text
+  founder?: Founder
+  values?: Array<{
+    title: string
+    description: string
+  }>
   seo?: SEO
 }
 

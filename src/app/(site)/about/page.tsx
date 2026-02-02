@@ -1,7 +1,12 @@
+import Image from 'next/image'
+import { existsSync } from 'fs'
+import path from 'path'
 import { Section } from '@/components/Section'
-import { sanityFetch } from '@/sanity/lib/fetch'
-import { siteSettingsQuery } from '@/sanity/lib/queries'
-import type { SiteSettings } from '@/sanity/lib/types'
+import { PortableText } from '@/components/PortableText'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { fetchAboutPage, fetchHomePage } from '@/sanity/lib/fetch'
+import { urlFor } from '@/sanity/lib/image'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -10,70 +15,148 @@ export const metadata: Metadata = {
 }
 
 export default async function AboutPage() {
-  const siteSettings = await sanityFetch<SiteSettings>({
-    query: siteSettingsQuery,
-  })
+  const [aboutPage, homePage] = await Promise.all([
+    fetchAboutPage(),
+    fetchHomePage(),
+  ])
+
+  const headline = aboutPage?.headline || 'About Fabian IT Solutions'
+  const intro = aboutPage?.intro
+  const body = aboutPage?.body
+
+  const founder = aboutPage?.founder || homePage?.founder
+
+  let founderImageUrl: string | null = null
+  const localFounderPath = path.join(
+    process.cwd(),
+    'public',
+    'images',
+    'founder',
+    'founder.jpg'
+  )
+  const localFounderExists = existsSync(localFounderPath)
+
+  if (founder?.image?.asset?._ref) {
+    try {
+      founderImageUrl = urlFor(founder.image).width(600).height(600).url()
+    } catch {
+      founderImageUrl = null
+    }
+  }
 
   return (
-    <Section>
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold">About Us</h1>
-          <p className="text-lg text-muted-foreground">
-            {siteSettings?.description ||
-              'Delivering innovative IT solutions for your business needs.'}
-          </p>
-        </div>
-
-        <div className="prose prose-neutral dark:prose-invert mx-auto max-w-none">
-          <div className="space-y-6">
-            <p>
-              {siteSettings?.description ||
-                'Fabian IT Solutions is dedicated to providing cutting-edge technology solutions that help businesses thrive in the digital age.'}
-            </p>
-            <p>
-              With years of experience in the IT industry, we specialize in
-              delivering tailored solutions that meet your unique business
-              requirements.
-            </p>
+    <>
+      <Section>
+        <div className="mx-auto max-w-4xl space-y-10">
+          <div className="space-y-4 text-center">
+            <h1 className="text-4xl font-light tracking-tight md:text-5xl">
+              {headline}
+            </h1>
+            {intro ? (
+              <p className="text-lg text-muted-foreground">{intro}</p>
+            ) : null}
           </div>
 
-          {siteSettings?.contact && (
-            <div className="mt-12 rounded-lg border bg-card p-6">
-              <h2 className="mb-4 text-2xl font-semibold">Contact Information</h2>
-              <div className="space-y-2">
-                {siteSettings.contact.email && (
-                  <p>
-                    <strong>Email:</strong>{' '}
-                    <a
-                      href={`mailto:${siteSettings.contact.email}`}
-                      className="text-primary hover:underline"
-                    >
-                      {siteSettings.contact.email}
-                    </a>
-                  </p>
-                )}
-                {siteSettings.contact.phone && (
-                  <p>
-                    <strong>Phone:</strong>{' '}
-                    <a
-                      href={`tel:${siteSettings.contact.phone}`}
-                      className="text-primary hover:underline"
-                    >
-                      {siteSettings.contact.phone}
-                    </a>
-                  </p>
-                )}
-                {siteSettings.contact.address && (
-                  <p>
-                    <strong>Address:</strong> {siteSettings.contact.address}
-                  </p>
-                )}
-              </div>
+          {body ? (
+            <div className="prose prose-neutral dark:prose-invert mx-auto max-w-none">
+              <PortableText value={body} />
             </div>
+          ) : (
+            <p className="text-center text-muted-foreground">
+              Content will be added soon.
+            </p>
           )}
         </div>
-      </div>
-    </Section>
+      </Section>
+
+      {founder ? (
+        <Section className="bg-muted/30">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-2xl border border-border/50 bg-card mx-auto lg:mx-0">
+              {founderImageUrl ? (
+                <Image
+                  src={founderImageUrl}
+                  alt={founder.image?.alt || `${founder.name}, ${founder.role}`}
+                  fill
+                  className="object-cover"
+                />
+              ) : localFounderExists ? (
+                <Image
+                  src="/images/founder/founder.jpg"
+                  alt={`${founder.name}, ${founder.role}`}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="gradient-fallback absolute inset-0" />
+              )}
+            </div>
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
+                  Founder
+                </p>
+                <h2 className="text-4xl font-light tracking-tight md:text-5xl">
+                  {founder.name}
+                </h2>
+                <p className="text-muted-foreground">{founder.role}</p>
+              </div>
+              <Separator />
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                {founder.bio}
+              </p>
+              <div className="flex flex-wrap gap-4 text-sm">
+                {founder.email ? (
+                  <a
+                    href={`mailto:${founder.email}`}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {founder.email}
+                  </a>
+                ) : null}
+                {founder.linkedin ? (
+                  <a
+                    href={founder.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    LinkedIn
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </Section>
+      ) : null}
+
+      {aboutPage?.values && aboutPage.values.length > 0 ? (
+        <Section>
+          <div className="mx-auto max-w-5xl space-y-10">
+            <div className="text-center">
+              <h2 className="text-3xl font-light tracking-tight md:text-4xl">
+                What We Value
+              </h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {aboutPage.values.map((value) => (
+                <Card key={value.title} className="border-border/50 bg-card/80">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-medium">
+                      {value.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {value.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </Section>
+      ) : null}
+    </>
   )
 }

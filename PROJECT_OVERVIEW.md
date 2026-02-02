@@ -1,4 +1,4 @@
-# Fabian IT Solutions — Project Overview
+# Fabian IT Solutions - Project Overview
 
 ## Tech Stack
 
@@ -47,7 +47,7 @@ Reusable React components.
   - `ServiceCard.tsx`
   - `ProjectCard.tsx`
   - `PostCard.tsx` (legacy, not used)
-- **`ui/`** - shadcn/ui components (Button, etc.)
+- **`ui/`** - shadcn/ui components (Button, Card, Badge, Separator, Accordion, Input, Textarea)
 
 ### `src/sanity/`
 Sanity CMS configuration and utilities.
@@ -55,6 +55,9 @@ Sanity CMS configuration and utilities.
 - **`schemaTypes/`** - Content schemas:
   - `index.ts` - Exports all schemas
   - `siteSettings.ts` - Singleton site configuration
+  - `homePage.ts` - Home page singleton
+  - `aboutPage.ts` - About page singleton
+  - `founder.ts` - Reusable founder object
   - `service.ts` - Service documents
   - `project.ts` - Project documents
   - `post.ts` - Blog posts (legacy, not used)
@@ -69,7 +72,7 @@ Sanity CMS configuration and utilities.
 - **`lib/`** - Sanity utilities:
   - `client.ts` - Read-only Sanity client
   - `write-client.ts` - Write client with token (server-only)
-  - `fetch.ts` - Cached fetch helper with revalidation
+  - `fetch.ts` - Cached fetch helpers with revalidation
   - `queries.ts` - GROQ queries for all content types
   - `types.ts` - TypeScript types matching Sanity schemas
   - `image.ts` - Image URL builder helper
@@ -84,98 +87,46 @@ General utilities.
 - **`utils.ts`** - `cn()` helper for className merging
 - **`seed-data.ts`** - Fallback seed data (legacy, minimal usage)
 
-### `public/images/`
+### `public/`
 Static image assets.
 
-- **`hero/main.jpg`** - Home page hero image
-- **`founder/founder.jpg`** - Founder profile image (1200x1200px recommended)
+- **`hero/logo.png`** - Site logo (required)
+- **`images/hero/main.jpg`** - Home page hero image (optional)
+- **`images/founder/founder.jpg`** - Founder profile image (optional)
 
-## Where to Edit Key Things
+## CMS Editable Content (Sanity)
 
-### Navigation Links
-**File**: `src/components/Navbar.tsx`
-- Edit `navLinks` array (line ~12)
+Edit content in Sanity Studio at `/admin`:
 
-### Footer Links
-**File**: `src/components/Footer.tsx`
-- Edit Quick Links section (line ~47)
-- Edit contact info (line ~82)
+- **Home Page** (singleton) - Hero copy, CTAs, trust items, about preview, founder
+- **About Page** (singleton) - Headline, intro, body, values, founder override
+- **Founder** (object) - Reusable founder info for Home and About
+- **Site Settings** (singleton) - Brand name, nav, footer links, contact, SEO
+- **Services** and **Projects** - Existing content types remain unchanged
 
-### Home Page Sections
-**File**: `src/app/(site)/page.tsx`
-- Hero section: lines ~64-104
-- Services preview: lines ~106-130
-- Projects preview: lines ~132-154
-- Founder section: lines ~156-180
-- CTA section: lines ~182-197
+## Where to Edit Founder Info
 
-### Services Page
-**File**: `src/app/(site)/services/page.tsx`
-- Layout and styling only (content from Sanity)
+- **Primary source**: Home Page singleton (`homePage.founder`)
+- **Optional override**: About Page singleton (`aboutPage.founder`)
+- If About Page founder is empty, the Home Page founder is used.
 
-### Work/Projects Page
-**File**: `src/app/(site)/work/page.tsx`
-- Layout and styling only (content from Sanity)
+## Logo and Images
 
-### Contact Form Email
-**File**: `src/app/api/contact/route.ts`
-- Email recipient: line ~95 (`fabiankivipa@yahoo.com`)
-- Email subject: line ~97
-- Email body template: lines ~99-107
+- **Logo**: Place at `public/hero/logo.png` (used in Navbar + Footer)
+- **Hero image**: Place at `public/images/hero/main.jpg`
+- **Founder image**: Place at `public/images/founder/founder.jpg`
 
-### Contact Phone Number
-**Files to update**:
-- `src/components/Footer.tsx` (line ~82)
-- `src/app/(site)/contact/page.tsx` (line ~20)
-- `src/lib/seed-data.ts` (line ~32) - if still referenced
+## How to Publish Changes and See Them Live
 
-Current phone: `+255 714 469 423`
-
-### Environment Variables
-**File**: `.env.local` (create if missing)
-
-Required:
-```
-NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
-NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_API_WRITE_TOKEN=your-write-token
-RESEND_API_KEY=re_xxxxxxxxxxxxx
-RESEND_FROM_EMAIL=your-verified-email@domain.com
-NEXT_PUBLIC_SITE_URL=https://yourdomain.com
-```
-
-### Sanity Content Types
-**Files**: `src/sanity/schemaTypes/*.ts`
-- Edit field definitions, validations, previews
-
-### Sanity Studio Structure
-**File**: `src/sanity/structure.ts`
-- Organize content groups, set singleton for siteSettings
-
-## How to Add Images
-
-### Static Images (public folder)
-Place images in `public/images/`:
-
-- Hero: `public/images/hero/main.jpg`
-- Founder: `public/images/founder/founder.jpg`
-- Sections: `public/images/sections/*.jpg`
-
-Reference in code:
-```tsx
-<Image src="/images/hero/main.jpg" alt="..." />
-```
-
-### Sanity Images (CMS)
-1. Upload in Sanity Studio at `/admin`
-2. Images are automatically optimized via `urlFor()` helper
-3. Reference in components using `urlFor(image).width(800).url()`
+1. Visit `/admin` and edit the Home Page or About Page singleton documents.
+2. Click **Publish** in Sanity Studio.
+3. Refresh the site - content updates within ~60 seconds due to ISR caching.
 
 ## Common Edits
 
 ### Change Site Brand Name
-1. **Sanity**: Edit "Site Settings" document in `/admin`
-2. **Fallback**: `src/app/(site)/page.tsx` line ~69
+1. **Sanity**: Edit "Site Settings" document in `/admin`.
+2. **Fallback**: `src/app/(site)/layout.tsx`
 
 ### Add New Navigation Link
 1. Edit `src/components/Navbar.tsx` - add to `navLinks` array
@@ -183,31 +134,14 @@ Reference in code:
 3. Add route to sitemap if needed: `src/app/sitemap.ts`
 
 ### Change Contact Email
-1. **API Route**: `src/app/api/contact/route.ts` line ~95
-2. **Display**: `src/app/(site)/contact/page.tsx` line ~20
-3. **Footer**: `src/components/Footer.tsx` line ~82
+1. **API Route**: `src/app/api/contact/route.ts`
+2. **Display**: `src/app/(site)/contact/page.tsx`
+3. **Footer**: `src/components/Footer.tsx`
 
 ### Change Color Scheme
 1. Edit `src/app/globals.css`
-2. Modify CSS variables in `:root` and `.dark` sections
+2. Modify CSS variables in `:root` and `.dark`
 3. Primary color: `--primary` variable
-
-### Add New Sanity Content Type
-1. Create schema: `src/sanity/schemaTypes/yourType.ts`
-2. Export in: `src/sanity/schemaTypes/index.ts`
-3. Add query: `src/sanity/lib/queries.ts`
-4. Add type: `src/sanity/lib/types.ts`
-5. Add to structure: `src/sanity/structure.ts` (optional)
-
-### Modify Contact Form
-1. **Form UI**: `src/components/ContactForm.tsx`
-2. **Validation/Email**: `src/app/api/contact/route.ts`
-3. **Rate limiting**: Already implemented (5 req/min per IP)
-
-### Update Founder Info
-1. **Home page**: `src/app/(site)/page.tsx` lines ~156-180
-2. **Image**: Place at `public/images/founder/founder.jpg`
-3. **About page**: Can add similar section if needed
 
 ## Development Commands
 
@@ -237,17 +171,8 @@ npm run lint
 - **Image Optimization**: Next.js Image component + Sanity image URLs
 - **Dark Mode**: Handled by next-themes, toggle in Navbar
 - **Email**: Uses Resend API (requires `RESEND_API_KEY` in env)
-- **No Blog**: Blog functionality has been removed
+- **No Blog**: Blog functionality remains removed from the public site
 
 ## Content Management
 
-All content is managed in Sanity Studio at `/admin`:
-
-1. **Site Settings** (singleton) - Brand, nav, contact, socials
-2. **Services** - Service offerings
-3. **Projects** - Portfolio/work items
-4. **Testimonials** - Client testimonials
-5. **FAQs** - Frequently asked questions
-6. **Contact Messages** - Form submissions (if storing to Sanity)
-
-Content is fetched server-side and cached with ISR (Incremental Static Regeneration).
+All content is managed in Sanity Studio at `/admin` and fetched server-side with ISR.

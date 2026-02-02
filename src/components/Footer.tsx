@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Github, Linkedin, Twitter, Mail } from "lucide-react"
 import { Container } from "@/components/Container"
 
@@ -25,7 +26,13 @@ const socialLinks = [
   },
 ]
 
-export function Footer() {
+interface FooterProps {
+  brandName: string
+  description?: string
+  logoExists: boolean
+}
+
+export function Footer({ brandName, description, logoExists }: FooterProps) {
   const currentYear = new Date().getFullYear()
 
   return (
@@ -35,10 +42,22 @@ export function Footer() {
           <div className="grid gap-12 md:grid-cols-3">
             {/* Brand */}
             <div className="space-y-4">
-              <h3 className="text-base font-medium tracking-tight">Fabian IT Solutions</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Delivering innovative IT solutions for your business needs.
-              </p>
+              {logoExists ? (
+                <Image
+                  src="/hero/logo.png"
+                  alt="Fabian IT Solutions logo"
+                  width={160}
+                  height={36}
+                  className="h-8 w-auto object-contain"
+                />
+              ) : (
+                <h3 className="text-base font-medium tracking-tight">{brandName}</h3>
+              )}
+              {description ? (
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {description}
+                </p>
+              ) : null}
             </div>
 
             {/* Quick Links */}
@@ -114,7 +133,7 @@ export function Footer() {
           </div>
 
           <div className="mt-12 border-t border-border/40 pt-8 text-center text-sm text-muted-foreground">
-            <p>© {currentYear} Fabian IT Solutions. All rights reserved.</p>
+            <p>Copyright {currentYear} {brandName}. All rights reserved.</p>
           </div>
         </div>
       </Container>

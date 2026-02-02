@@ -6,6 +6,8 @@ import type {
   Post,
   Testimonial,
   Faq,
+  HomePage,
+  AboutPage,
 } from './types'
 
 // Site Settings (singleton)
@@ -31,6 +33,52 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
     url
   },
   contact,
+  seo
+}`
+
+// Home Page (singleton)
+export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0]{
+  _id,
+  _type,
+  heroHeadline,
+  heroSubheadline,
+  primaryCTA,
+  primaryCTAHref,
+  secondaryCTA,
+  secondaryCTAHref,
+  trustItems,
+  aboutPreviewTitle,
+  aboutPreviewBody,
+  "founder": founder{
+    name,
+    role,
+    bio,
+    image,
+    email,
+    linkedin
+  },
+  seo
+}`
+
+// About Page (singleton)
+export const ABOUT_PAGE_QUERY = groq`*[_type == "aboutPage"][0]{
+  _id,
+  _type,
+  headline,
+  intro,
+  "body": body[],
+  "founder": founder{
+    name,
+    role,
+    bio,
+    image,
+    email,
+    linkedin
+  },
+  "values": values[]{
+    title,
+    description
+  },
   seo
 }`
 

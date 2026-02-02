@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Moon, Sun, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
@@ -17,11 +18,17 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ]
 
-export function Navbar() {
+interface NavbarProps {
+  brandName: string
+  logoExists: boolean
+}
+
+export function Navbar({ brandName, logoExists }: NavbarProps) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [logoFailed, setLogoFailed] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -31,8 +38,20 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Container>
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2 font-medium tracking-tight">
-            <span>Fabian IT Solutions</span>
+          <Link href="/" className="flex items-center space-x-3 font-medium tracking-tight">
+            {logoExists && !logoFailed ? (
+              <Image
+                src="/hero/logo.png"
+                alt="Fabian IT Solutions logo"
+                width={140}
+                height={32}
+                className="h-7 w-auto object-contain"
+                onError={() => setLogoFailed(true)}
+                priority
+              />
+            ) : (
+              <span>{brandName}</span>
+            )}
           </Link>
 
           {/* Desktop Navigation */}

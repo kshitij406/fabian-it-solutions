@@ -15,6 +15,24 @@ export const structure: StructureResolver = (S) =>
             .documentId('siteSettings')
             .title('Site Settings')
         ),
+      S.listItem()
+        .title('Home Page')
+        .id('homePage')
+        .child(
+          S.document()
+            .schemaType('homePage')
+            .documentId('homePage')
+            .title('Home Page')
+        ),
+      S.listItem()
+        .title('About Page')
+        .id('aboutPage')
+        .child(
+          S.document()
+            .schemaType('aboutPage')
+            .documentId('aboutPage')
+            .title('About Page')
+        ),
       S.divider(),
       // Site Content Group
       S.listItem()

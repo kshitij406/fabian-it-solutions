@@ -4,9 +4,12 @@ import { type SchemaTypeDefinition } from 'sanity'
 import { blockContent } from './blockContent'
 import { link } from './link'
 import { seo } from './seo'
+import { founder } from './founder'
 
 // Document schemas
 import { author } from './author'
+import { homePage } from './homePage'
+import { aboutPage } from './aboutPage'
 import { siteSettings } from './siteSettings'
 import { service } from './service'
 import { project } from './project'
@@ -21,8 +24,11 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     blockContent,
     link,
     seo,
+    founder,
     // Document types
     author,
+    homePage,
+    aboutPage,
     siteSettings,
     service,
     project,

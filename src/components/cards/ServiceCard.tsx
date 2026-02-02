@@ -3,6 +3,8 @@ import Image from 'next/image'
 import type { Service } from '@/sanity/lib/types'
 import { urlFor } from '@/sanity/lib/image'
 import { cn } from '@/lib/utils'
+import { Card, CardContent } from '@/components/ui/card'
+import { Sparkles } from 'lucide-react'
 
 interface ServiceCardProps {
   service: Service
@@ -20,29 +22,28 @@ export function ServiceCard({ service, className }: ServiceCardProps) {
   }
 
   return (
-    <Link
-      href={`/services#${service.slug.current}`}
-      className={cn(
-        'group block space-y-4 rounded-lg border border-border/40 bg-card p-8 transition-all hover:border-border',
-        className
-      )}
-    >
-      {imageUrl && (
-        <div className="relative aspect-video w-full overflow-hidden rounded-md">
-          <Image
-            src={imageUrl}
-            alt={service.image?.alt || service.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          />
-        </div>
-      )}
-      <div className="space-y-2">
-        <h3 className="text-xl font-medium tracking-tight">{service.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {service.shortDescription}
-        </p>
-      </div>
+    <Link href={`/services#${service.slug.current}`} className={cn('group', className)}>
+      <Card className="h-full overflow-hidden border-border/40 bg-card/80 transition-all hover:border-border">
+        {imageUrl && (
+          <div className="relative aspect-video w-full overflow-hidden">
+            <Image
+              src={imageUrl}
+              alt={service.image?.alt || service.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+          </div>
+        )}
+        <CardContent className="space-y-3 p-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-medium tracking-tight">{service.title}</h3>
+            <Sparkles className="h-4 w-4 text-muted-foreground/70" />
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {service.shortDescription}
+          </p>
+        </CardContent>
+      </Card>
     </Link>
   )
 }
