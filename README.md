@@ -225,15 +225,3 @@ Founder: Fabian Kivipa
 This project is private and not licensed for redistribution.
 
 ```
-
----
-
-### If you want improvements
-I can also:
-- Shorten this for a **portfolio-only README**
-- Add a **Screenshots** section
-- Add a **“Why this architecture?”** explanation
-- Rewrite it for **recruiters / clients**
-
-Just tell me what audience you want to optimize it for.
-```
