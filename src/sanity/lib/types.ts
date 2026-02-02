@@ -1,10 +1,19 @@
-export interface SanityImage {
-  asset: {
-    _ref: string
-    _type: 'reference'
+import type { PortableTextBlock } from '@portabletext/types'
+
+export type PortableTextValue = PortableTextBlock[]
+
+export type SanityImage = {
+  alt?: string
+  asset?: {
+    _id: string
+    url: string
+    metadata?: {
+      dimensions?: {
+        width?: number
+        height?: number
+      }
+    }
   }
-  alt: string
-  _type: 'image'
 }
 
 export interface Slug {
@@ -81,7 +90,7 @@ export interface AboutPage {
   _type: 'aboutPage'
   headline: string
   intro?: string
-  body: any // Portable Text
+  body: PortableTextValue
   founder?: Founder
   values?: Array<{
     title: string
@@ -96,10 +105,8 @@ export interface Service {
   title: string
   slug: Slug
   shortDescription: string
-  excerpt?: string
-  icon?: string
   image?: SanityImage
-  body: any // Portable Text
+  body: PortableTextValue
   features?: string[]
   seo?: SEO
 }
@@ -110,7 +117,6 @@ export interface Project {
   title: string
   slug: Slug
   shortDescription: string
-  excerpt?: string
   tags?: string[]
   coverImage: SanityImage
   gallery?: SanityImage[]
@@ -119,7 +125,7 @@ export interface Project {
     live?: string
     caseStudy?: string
   }
-  body: any // Portable Text
+  body: PortableTextValue
   completedAt?: string
   seo?: SEO
 }
@@ -145,7 +151,7 @@ export interface Post {
   publishedAt: string
   author: Author
   categories?: string[]
-  body: any // Portable Text
+  body: PortableTextValue
   seo?: SEO
 }
 

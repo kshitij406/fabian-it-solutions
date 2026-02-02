@@ -90,9 +90,7 @@ export const seedProjects: Project[] = [
       'Migrated legacy infrastructure to modern cloud architecture, reducing costs by 40%.',
     tags: ['Cloud', 'Migration', 'Enterprise'],
     coverImage: {
-      asset: { _ref: '', _type: 'reference' },
       alt: 'Cloud infrastructure diagram',
-      _type: 'image',
     },
     body: [],
   },
@@ -105,9 +103,7 @@ export const seedProjects: Project[] = [
       'Implemented comprehensive security framework achieving SOC 2 compliance.',
     tags: ['Security', 'Compliance'],
     coverImage: {
-      asset: { _ref: '', _type: 'reference' },
       alt: 'Security architecture',
-      _type: 'image',
     },
     body: [],
   },

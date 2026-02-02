@@ -29,19 +29,6 @@ export const service = defineType({
       validation: (Rule) => Rule.required().max(200),
     }),
     defineField({
-      type: 'text',
-      name: 'excerpt',
-      title: 'Excerpt',
-      description: 'Longer excerpt for listings',
-      rows: 3,
-    }),
-    defineField({
-      type: 'string',
-      name: 'icon',
-      title: 'Icon Name',
-      description: 'Icon identifier (e.g., from lucide-react)',
-    }),
-    defineField({
       type: 'image',
       name: 'image',
       title: 'Image',
@@ -69,6 +56,7 @@ export const service = defineType({
       title: 'Features',
       description: 'Key features or benefits',
       of: [{ type: 'string' }],
+      validation: (Rule) => Rule.unique(),
     }),
     defineField({
       type: 'seo',

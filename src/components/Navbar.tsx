@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/Container"
 import { cn } from "@/lib/utils"
+import type { SanityImage } from "@/sanity/lib/types"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,39 +21,42 @@ const navLinks = [
 
 interface NavbarProps {
   brandName: string
-  logoExists: boolean
+  logo?: SanityImage
 }
 
-export function Navbar({ brandName, logoExists }: NavbarProps) {
+export function Navbar({ brandName, logo }: NavbarProps) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [logoFailed, setLogoFailed] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  const logoUrl = logo?.asset?.url
+  const logoAlt = logo?.alt || `${brandName} logo`
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Container>
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-3 font-medium tracking-tight">
-            {logoExists && !logoFailed ? (
+          <Link href="/" className="flex items-center gap-3 font-medium tracking-tight">
+            {logoUrl ? (
               <Image
-                src="/hero/logo.png"
-                alt="Fabian IT Solutions logo"
-                width={140}
+                src={logoUrl}
+                alt={logoAlt}
+                width={120}
                 height={32}
                 className="h-7 w-auto object-contain"
-                onError={() => setLogoFailed(true)}
-                priority
               />
             ) : (
-              <span>{brandName}</span>
+              <div className="h-8 w-8 rounded-sm bg-muted" />
             )}
+
+            <span className="text-base font-semibold text-foreground">{brandName}</span>
           </Link>
+
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:space-x-8">
@@ -80,7 +84,7 @@ export function Navbar({ brandName, logoExists }: NavbarProps) {
                 size="icon"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 aria-label="Toggle theme"
-                className="h-9 w-9"
+                className="h-9 w-9 rounded-full border border-border/50 bg-background/60 hover:bg-accent"
               >
                 <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -92,7 +96,7 @@ export function Navbar({ brandName, logoExists }: NavbarProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden h-9 w-9"
+              className="md:hidden h-9 w-9 rounded-full border border-border/50 bg-background/60 hover:bg-accent"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >

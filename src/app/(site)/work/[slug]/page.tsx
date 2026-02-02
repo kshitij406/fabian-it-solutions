@@ -1,23 +1,22 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/Section'
 import { PortableText } from '@/components/PortableText'
 import { sanityFetch } from '@/sanity/lib/fetch'
 import { projectBySlugQuery } from '@/sanity/lib/queries'
-import { urlFor } from '@/sanity/lib/image'
 import type { Project } from '@/sanity/lib/types'
 import type { Metadata } from 'next'
+import { SanityImage } from '@/components/SanityImage'
 
 interface PageProps {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { slug } = await params
+  const { slug } = params
   
   let project: Project | null = null
   try {
@@ -39,8 +38,10 @@ export async function generateMetadata({
   const title = project.seo?.title || project.title || 'Project'
   const description =
     project.seo?.description || project.shortDescription || 'Project details'
-  const imageUrl = project.coverImage
-    ? urlFor(project.coverImage).width(1200).height(630).url()
+
+  const baseImageUrl = project.coverImage?.asset?.url
+  const imageUrl = baseImageUrl
+    ? `${baseImageUrl}?w=1200&h=630&fit=crop`
     : undefined
 
   const metadata: Metadata = {
@@ -76,7 +77,7 @@ export async function generateMetadata({
 }
 
 export default async function ProjectPage({ params }: PageProps) {
-  const { slug } = await params
+  const { slug } = params
   const project = await sanityFetch<Project>({
     query: projectBySlugQuery,
     params: { slug },
@@ -85,10 +86,6 @@ export default async function ProjectPage({ params }: PageProps) {
   if (!project) {
     notFound()
   }
-
-  const coverImageUrl = project.coverImage
-    ? urlFor(project.coverImage).width(1200).height(800).url()
-    : null
 
   return (
     <Section>
@@ -115,16 +112,14 @@ export default async function ProjectPage({ params }: PageProps) {
           )}
         </div>
 
-        {coverImageUrl && (
-          <div className="relative mb-12 aspect-video w-full overflow-hidden rounded-lg">
-            <Image
-              src={coverImageUrl}
-              alt={project.coverImage.alt || project.title}
-              fill
-              className="object-cover"
-            />
-          </div>
-        )}
+        <div className="relative mb-12 aspect-video w-full overflow-hidden rounded-lg">
+          <SanityImage
+            image={project.coverImage}
+            altFallback={project.title}
+            className="object-cover"
+            priority
+          />
+        </div>
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <PortableText value={project.body} />
@@ -139,10 +134,9 @@ export default async function ProjectPage({ params }: PageProps) {
                   key={idx}
                   className="relative aspect-video w-full overflow-hidden rounded-lg"
                 >
-                  <Image
-                    src={urlFor(image).width(800).height(600).url()}
-                    alt={image.alt || `Gallery image ${idx + 1}`}
-                    fill
+                  <SanityImage
+                    image={image}
+                    altFallback={`Gallery image ${idx + 1}`}
                     className="object-cover"
                   />
                 </div>

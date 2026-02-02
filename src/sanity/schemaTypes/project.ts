@@ -29,13 +29,6 @@ export const project = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      type: 'text',
-      name: 'excerpt',
-      title: 'Excerpt',
-      description: 'Longer excerpt',
-      rows: 3,
-    }),
-    defineField({
       type: 'array',
       name: 'tags',
       title: 'Tags',
@@ -44,6 +37,7 @@ export const project = defineType({
       options: {
         layout: 'tags',
       },
+      validation: (Rule) => Rule.unique(),
     }),
     defineField({
       type: 'image',

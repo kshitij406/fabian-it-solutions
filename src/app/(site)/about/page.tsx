@@ -1,13 +1,10 @@
-import Image from 'next/image'
-import { existsSync } from 'fs'
-import path from 'path'
 import { Section } from '@/components/Section'
 import { PortableText } from '@/components/PortableText'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { fetchAboutPage, fetchHomePage } from '@/sanity/lib/fetch'
-import { urlFor } from '@/sanity/lib/image'
 import type { Metadata } from 'next'
+import { SanityImage } from '@/components/SanityImage'
 
 export const metadata: Metadata = {
   title: 'About',
@@ -25,24 +22,6 @@ export default async function AboutPage() {
   const body = aboutPage?.body
 
   const founder = aboutPage?.founder || homePage?.founder
-
-  let founderImageUrl: string | null = null
-  const localFounderPath = path.join(
-    process.cwd(),
-    'public',
-    'images',
-    'founder',
-    'founder.jpg'
-  )
-  const localFounderExists = existsSync(localFounderPath)
-
-  if (founder?.image?.asset?._ref) {
-    try {
-      founderImageUrl = urlFor(founder.image).width(600).height(600).url()
-    } catch {
-      founderImageUrl = null
-    }
-  }
 
   return (
     <>
@@ -73,23 +52,11 @@ export default async function AboutPage() {
         <Section className="bg-muted/30">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-2xl border border-border/50 bg-card mx-auto lg:mx-0">
-              {founderImageUrl ? (
-                <Image
-                  src={founderImageUrl}
-                  alt={founder.image?.alt || `${founder.name}, ${founder.role}`}
-                  fill
-                  className="object-cover"
-                />
-              ) : localFounderExists ? (
-                <Image
-                  src="/images/founder/founder.jpg"
-                  alt={`${founder.name}, ${founder.role}`}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="gradient-fallback absolute inset-0" />
-              )}
+              <SanityImage
+                image={founder.image}
+                altFallback={`${founder.name}, ${founder.role}`}
+                className="object-cover"
+              />
             </div>
             <div className="space-y-6">
               <div className="space-y-3">

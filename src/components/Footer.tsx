@@ -1,51 +1,33 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Github, Linkedin, Twitter, Mail } from "lucide-react"
+import { Mail, Phone, MapPin } from "lucide-react"
 import { Container } from "@/components/Container"
-
-const socialLinks = [
-  {
-    name: "GitHub",
-    href: "https://github.com",
-    icon: Github,
-  },
-  {
-    name: "LinkedIn",
-    href: "https://linkedin.com",
-    icon: Linkedin,
-  },
-  {
-    name: "Twitter",
-    href: "https://twitter.com",
-    icon: Twitter,
-  },
-  {
-    name: "Email",
-    href: "mailto:fabiankivipa@yahoo.com",
-    icon: Mail,
-  },
-]
+import type { ContactInfo, SanityImage, SocialLink } from "@/sanity/lib/types"
 
 interface FooterProps {
   brandName: string
   description?: string
-  logoExists: boolean
+  logo?: SanityImage
+  contact?: ContactInfo
+  socials: SocialLink[]
 }
 
-export function Footer({ brandName, description, logoExists }: FooterProps) {
+export function Footer({ brandName, description, logo, contact, socials }: FooterProps) {
   const currentYear = new Date().getFullYear()
+  const logoUrl = logo?.asset?.url
+  const logoAlt = logo?.alt || `${brandName} logo`
 
   return (
-    <footer className="border-t border-border/40 bg-background">
+    <footer className="border-t border-border/50 bg-background">
       <Container>
         <div className="py-16 md:py-20">
           <div className="grid gap-12 md:grid-cols-3">
             {/* Brand */}
             <div className="space-y-4">
-              {logoExists ? (
+              {logoUrl ? (
                 <Image
-                  src="/hero/logo.png"
-                  alt="Fabian IT Solutions logo"
+                  src={logoUrl}
+                  alt={logoAlt}
                   width={160}
                   height={36}
                   className="h-8 w-auto object-contain"
@@ -94,41 +76,51 @@ export function Footer({ brandName, description, logoExists }: FooterProps) {
             {/* Contact Info */}
             <div className="space-y-4">
               <h4 className="text-sm font-medium tracking-tight">Contact</h4>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>
-                  <a
-                    href="tel:+255714469423"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    +255 714 469 423
-                  </a>
-                </p>
-                <p>
-                  <a
-                    href="mailto:fabiankivipa@yahoo.com"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    fabiankivipa@yahoo.com
-                  </a>
-                </p>
-              </div>
-              <div className="flex space-x-4 pt-2">
-                {socialLinks.map((social) => {
-                  const Icon = social.icon
-                  return (
+              <div className="space-y-3 text-sm text-muted-foreground">
+                {contact?.phone ? (
+                  <p className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
                     <a
-                      key={social.name}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                      aria-label={social.name}
+                      href={`tel:${contact.phone}`}
+                      className="hover:text-foreground transition-colors"
                     >
-                      <Icon className="h-5 w-5" />
+                      {contact.phone}
                     </a>
-                  )
-                })}
+                  </p>
+                ) : null}
+                {contact?.email ? (
+                  <p className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="hover:text-foreground transition-colors"
+                    >
+                      {contact.email}
+                    </a>
+                  </p>
+                ) : null}
+                {contact?.address ? (
+                  <p className="flex items-start gap-2">
+                    <MapPin className="mt-0.5 h-4 w-4" />
+                    <span className="leading-relaxed">{contact.address}</span>
+                  </p>
+                ) : null}
               </div>
+              {socials.length > 0 ? (
+                <div className="flex flex-wrap gap-3 pt-2">
+                  {socials.map((social) => (
+                    <a
+                      key={`${social.platform}-${social.url}`}
+                      href={social.url}
+                      target={social.url.startsWith('http') ? "_blank" : undefined}
+                      rel={social.url.startsWith('http') ? "noopener noreferrer" : undefined}
+                      className="rounded-full border border-border/50 bg-background/60 px-3 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                    >
+                      {social.platform}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 

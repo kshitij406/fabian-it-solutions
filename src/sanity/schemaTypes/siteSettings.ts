@@ -26,6 +26,7 @@ export const siteSettings = defineType({
       title: 'Site Description',
       description: 'Default meta description for the site',
       rows: 3,
+      validation: (Rule) => Rule.max(200),
     }),
     defineField({
       type: 'image',
@@ -88,7 +89,11 @@ export const siteSettings = defineType({
               type: 'url',
               name: 'url',
               title: 'URL',
-              validation: (Rule) => Rule.required(),
+              validation: (Rule) =>
+                Rule.required().uri({
+                  allowRelative: false,
+                  scheme: ['http', 'https', 'mailto'],
+                }),
             },
           ],
           preview: {
@@ -110,12 +115,13 @@ export const siteSettings = defineType({
           type: 'string',
           name: 'email',
           title: 'Email',
-          validation: (Rule) => Rule.email(),
+          validation: (Rule) => Rule.required().email(),
         },
         {
           type: 'string',
           name: 'phone',
           title: 'Phone',
+          validation: (Rule) => Rule.required(),
         },
         {
           type: 'text',
@@ -124,6 +130,7 @@ export const siteSettings = defineType({
           rows: 3,
         },
       ],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       type: 'seo',

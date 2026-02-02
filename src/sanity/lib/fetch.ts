@@ -7,7 +7,7 @@ import type { AboutPage, HomePage } from './types'
 export const revalidate = 60 // Revalidate every 60 seconds
 
 export const sanityFetch = cache(
-  async <T = any>({
+  async <T = unknown>({
     query,
     params = {},
     revalidate: revalidateTime = revalidate,

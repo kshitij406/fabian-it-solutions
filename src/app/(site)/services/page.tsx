@@ -5,8 +5,7 @@ import { servicesQuery } from '@/sanity/lib/queries'
 import type { Service } from '@/sanity/lib/types'
 import { PortableText } from '@/components/PortableText'
 import type { Metadata } from 'next'
-import Image from 'next/image'
-import { urlFor } from '@/sanity/lib/image'
+import { SanityImage } from '@/components/SanityImage'
 
 export const metadata: Metadata = {
   title: 'Services',
@@ -72,23 +71,11 @@ export default async function ServicesPage() {
                     )}
                   </div>
                   <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg">
-                    {(() => {
-                      try {
-                        if (service.image?.asset?._ref && service.image.asset._ref.trim() !== '') {
-                          return (
-                            <Image
-                              src={urlFor(service.image).width(800).height(600).url()}
-                              alt={service.image.alt || service.title}
-                              fill
-                              className="object-cover"
-                            />
-                          )
-                        }
-                      } catch {
-                        // Invalid image reference
-                      }
-                      return <div className="gradient-fallback h-full w-full" />
-                    })()}
+                    <SanityImage
+                      image={service.image}
+                      altFallback={service.title}
+                      className="object-cover"
+                    />
                   </div>
                 </div>
               </div>

@@ -5,7 +5,7 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
-      // Site Settings (Singleton)
+      // Singletons
       S.listItem()
         .title('Site Settings')
         .id('siteSettings')
@@ -34,12 +34,12 @@ export const structure: StructureResolver = (S) =>
             .title('About Page')
         ),
       S.divider(),
-      // Site Content Group
+      // Core content
       S.listItem()
-        .title('Site Content')
+        .title('Services & Projects')
         .child(
           S.list()
-            .title('Site Content')
+            .title('Services & Projects')
             .items([
               S.listItem()
                 .title('Services')
@@ -49,6 +49,14 @@ export const structure: StructureResolver = (S) =>
                 .title('Projects')
                 .schemaType('project')
                 .child(S.documentTypeList('project').title('Projects')),
+            ])
+        ),
+      S.listItem()
+        .title('Testimonials & FAQs')
+        .child(
+          S.list()
+            .title('Testimonials & FAQs')
+            .items([
               S.listItem()
                 .title('Testimonials')
                 .schemaType('testimonial')
@@ -60,7 +68,7 @@ export const structure: StructureResolver = (S) =>
             ])
         ),
       S.divider(),
-      // Messages Group
+      // Messages
       S.listItem()
         .title('Messages')
         .child(

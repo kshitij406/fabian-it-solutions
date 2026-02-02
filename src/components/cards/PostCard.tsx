@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import type { Post } from '@/sanity/lib/types'
-import { urlFor } from '@/sanity/lib/image'
 import { cn } from '@/lib/utils'
+import { SanityImage } from '@/components/SanityImage'
 
 interface PostCardProps {
   post: Post
@@ -10,14 +9,6 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, className }: PostCardProps) {
-  let imageUrl: string | null = null
-  try {
-    if (post.coverImage?.asset?._ref && post.coverImage.asset._ref.trim() !== '') {
-      imageUrl = urlFor(post.coverImage).width(600).height(400).url()
-    }
-  } catch {
-    // Invalid image reference, use fallback
-  }
   const publishedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -34,18 +25,13 @@ export function PostCard({ post, className }: PostCardProps) {
         className
       )}
     >
-      {imageUrl ? (
-        <div className="relative aspect-video w-full overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={post.coverImage?.alt || post.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-          />
-        </div>
-      ) : (
-        <div className="gradient-fallback aspect-video w-full" />
-      )}
+      <div className="relative aspect-video w-full overflow-hidden">
+        <SanityImage
+          image={post.coverImage}
+          altFallback={post.title}
+          className="transition-transform duration-500 group-hover:scale-[1.02]"
+        />
+      </div>
       <div className="space-y-4 p-8">
         <div className="space-y-2">
           <h3 className="text-xl font-medium tracking-tight">{post.title}</h3>

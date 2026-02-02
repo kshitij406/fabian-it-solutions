@@ -10,14 +10,30 @@ import type {
   AboutPage,
 } from './types'
 
+const sanityImageFragment = groq`
+  {
+    alt,
+    asset->{
+      _id,
+      url,
+      metadata{
+        dimensions{
+          width,
+          height
+        }
+      }
+    }
+  }
+`
+
 // Site Settings (singleton)
-export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
+export const siteSettingsQuery = groq`*[_type == "siteSettings" && _id == "siteSettings"][0]{
   _id,
   _type,
   title,
   brandName,
   description,
-  logo,
+  "logo": logo ${sanityImageFragment},
   "primaryNav": primaryNav[]{
     label,
     href,
@@ -37,7 +53,7 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
 }`
 
 // Home Page (singleton)
-export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0]{
+export const HOME_PAGE_QUERY = groq`*[_type == "homePage" && _id == "homePage"][0]{
   _id,
   _type,
   heroHeadline,
@@ -53,7 +69,7 @@ export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0]{
     name,
     role,
     bio,
-    image,
+    "image": image ${sanityImageFragment},
     email,
     linkedin
   },
@@ -61,7 +77,7 @@ export const HOME_PAGE_QUERY = groq`*[_type == "homePage"][0]{
 }`
 
 // About Page (singleton)
-export const ABOUT_PAGE_QUERY = groq`*[_type == "aboutPage"][0]{
+export const ABOUT_PAGE_QUERY = groq`*[_type == "aboutPage" && _id == "aboutPage"][0]{
   _id,
   _type,
   headline,
@@ -71,7 +87,7 @@ export const ABOUT_PAGE_QUERY = groq`*[_type == "aboutPage"][0]{
     name,
     role,
     bio,
-    image,
+    "image": image ${sanityImageFragment},
     email,
     linkedin
   },
@@ -89,9 +105,7 @@ export const servicesQuery = groq`*[_type == "service"] | order(title asc){
   title,
   slug,
   shortDescription,
-  excerpt,
-  icon,
-  image,
+  "image": image ${sanityImageFragment},
   "body": body[],
   features,
   seo
@@ -104,10 +118,9 @@ export const projectsQuery = groq`*[_type == "project"] | order(completedAt desc
   title,
   slug,
   shortDescription,
-  excerpt,
   tags,
-  coverImage,
-  "gallery": gallery[],
+  "coverImage": coverImage ${sanityImageFragment},
+  "gallery": gallery[] ${sanityImageFragment},
   links,
   "body": body[],
   completedAt,
@@ -121,9 +134,9 @@ export const featuredProjectsQuery = groq`*[_type == "project"] | order(complete
   title,
   slug,
   shortDescription,
-  excerpt,
   tags,
-  coverImage,
+  "coverImage": coverImage ${sanityImageFragment},
+  "gallery": gallery[] ${sanityImageFragment},
   links,
   completedAt
 }`
@@ -135,10 +148,9 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
   title,
   slug,
   shortDescription,
-  excerpt,
   tags,
-  coverImage,
-  "gallery": gallery[],
+  "coverImage": coverImage ${sanityImageFragment},
+  "gallery": gallery[] ${sanityImageFragment},
   links,
   "body": body[],
   completedAt,
@@ -152,14 +164,14 @@ export const postsQuery = groq`*[_type == "post"] | order(publishedAt desc){
   title,
   slug,
   excerpt,
-  coverImage,
+  "coverImage": coverImage ${sanityImageFragment},
   publishedAt,
   "author": author->{
     _id,
     _type,
     name,
     slug,
-    image,
+    "image": image ${sanityImageFragment},
     bio
   },
   categories,
@@ -174,14 +186,14 @@ export const postBySlugQuery = groq`*[_type == "post" && slug.current == $slug][
   title,
   slug,
   excerpt,
-  coverImage,
+  "coverImage": coverImage ${sanityImageFragment},
   publishedAt,
   "author": author->{
     _id,
     _type,
     name,
     slug,
-    image,
+    "image": image ${sanityImageFragment},
     bio,
     website,
     email

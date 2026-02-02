@@ -38,6 +38,7 @@ Reusable React components.
 
 - **`Navbar.tsx`** - Main navigation (client component)
 - **`Footer.tsx`** - Site footer
+- **`SanityImage.tsx`** - Centralized Sanity image renderer with graceful fallback
 - **`Section.tsx`** - Page section wrapper with Container
 - **`Container.tsx`** - Consistent max-width container
 - **`ContactForm.tsx`** - Contact form (client component)
@@ -90,9 +91,7 @@ General utilities.
 ### `public/`
 Static image assets.
 
-- **`hero/logo.png`** - Site logo (required)
-- **`images/hero/main.jpg`** - Home page hero image (optional)
-- **`images/founder/founder.jpg`** - Founder profile image (optional)
+- **`images/hero/main.jpg`** - Home page hero image (optional, currently used for stable hero layout)
 
 ## CMS Editable Content (Sanity)
 
@@ -112,9 +111,22 @@ Edit content in Sanity Studio at `/admin`:
 
 ## Logo and Images
 
-- **Logo**: Place at `public/hero/logo.png` (used in Navbar + Footer)
-- **Hero image**: Place at `public/images/hero/main.jpg`
-- **Founder image**: Place at `public/images/founder/founder.jpg`
+- **Logo**: Upload to **Site Settings → Logo** in `/admin` (used in Navbar + Footer)
+- **Service image**: Upload to **Service → Image**
+- **Project cover image**: Upload to **Project → Cover Image**
+- **Project gallery**: Optional **Project → Gallery**
+- **Founder image**: Upload to **Home Page → Founder → Image** (or About override)
+- **Hero image**: Currently served from `public/images/hero/main.jpg` (layout-stable, not CMS-controlled)
+
+## Sanity Image Rendering System
+
+All Sanity images are fetched with a consistent query shape and rendered through a single component:
+
+- **Query shape**: `image { alt, asset->{ _id, url, metadata{dimensions{width,height}} } }`
+- **Renderer**: `src/components/SanityImage.tsx`
+  - Never renders `<Image>` if `image.asset.url` is missing
+  - Renders a palette-based gradient placeholder instead
+  - Uses dimensions when available to avoid layout shift
 
 ## How to Publish Changes and See Them Live
 
@@ -134,14 +146,18 @@ Edit content in Sanity Studio at `/admin`:
 3. Add route to sitemap if needed: `src/app/sitemap.ts`
 
 ### Change Contact Email
-1. **API Route**: `src/app/api/contact/route.ts`
-2. **Display**: `src/app/(site)/contact/page.tsx`
-3. **Footer**: `src/components/Footer.tsx`
+1. **Sanity**: Edit "Site Settings" → Contact → Email in `/admin`
+2. **API Route**: `src/app/api/contact/route.ts` (email sending target)
+3. **Display**: Footer auto-updates from Site Settings
 
 ### Change Color Scheme
 1. Edit `src/app/globals.css`
 2. Modify CSS variables in `:root` and `.dark`
-3. Primary color: `--primary` variable
+3. Palette variables map to:
+   - `--background`: Warm light `#E8E2DB`
+   - `--foreground`: Navy `#1A3263`
+   - `--secondary`: Slate Blue `#547792`
+   - `--accent`: Amber `#FAB95B`
 
 ## Development Commands
 

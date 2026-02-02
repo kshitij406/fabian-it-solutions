@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function WorkPage() {
-  const projects = await sanityFetch<Project[]>({ query: projectsQuery })
+  const projects = await sanityFetch<Project[]>({ query: projectsQuery }).catch(() => [])
 
   return (
     <Section>

@@ -1,7 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { existsSync } from 'fs'
-import path from 'path'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -11,8 +9,8 @@ import { ProjectCard } from '@/components/cards/ProjectCard'
 import { sanityFetch, fetchHomePage } from '@/sanity/lib/fetch'
 import { servicesQuery, featuredProjectsQuery } from '@/sanity/lib/queries'
 import type { Service, Project } from '@/sanity/lib/types'
-import { urlFor } from '@/sanity/lib/image'
 import type { Metadata } from 'next'
+import { SanityImage } from '@/components/SanityImage'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -39,33 +37,6 @@ export default async function HomePage() {
   const secondaryCTA = homePage?.secondaryCTA
   const secondaryCTAHref = homePage?.secondaryCTAHref || '/services'
   const trustItems = homePage?.trustItems || []
-
-  const heroImagePath = path.join(
-    process.cwd(),
-    'public',
-    'images',
-    'hero',
-    'main.jpg'
-  )
-  const heroImageExists = existsSync(heroImagePath)
-
-  let founderImageUrl: string | null = null
-  const localFounderPath = path.join(
-    process.cwd(),
-    'public',
-    'images',
-    'founder',
-    'founder.jpg'
-  )
-  const localFounderExists = existsSync(localFounderPath)
-
-  if (homePage?.founder?.image?.asset?._ref) {
-    try {
-      founderImageUrl = urlFor(homePage.founder.image).width(600).height(600).url()
-    } catch {
-      founderImageUrl = null
-    }
-  }
 
   const founder = homePage?.founder
 
@@ -104,17 +75,13 @@ export default async function HomePage() {
             ) : null}
           </div>
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border/50 bg-card">
-            {heroImageExists ? (
-              <Image
-                src="/images/hero/main.jpg"
-                alt="Modern IT infrastructure"
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="hero-gradient absolute inset-0" />
-            )}
+            <Image
+              src="/images/hero/main.jpg"
+              alt="Modern IT infrastructure"
+              fill
+              className="object-cover"
+              priority
+            />
             <div className="gradient-fallback absolute inset-0 -z-10" />
           </div>
         </div>
@@ -234,23 +201,12 @@ export default async function HomePage() {
         <Section>
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="relative aspect-square w-full max-w-md overflow-hidden rounded-2xl border border-border/50 bg-card mx-auto lg:mx-0">
-              {founderImageUrl ? (
-                <Image
-                  src={founderImageUrl}
-                  alt={founder.image?.alt || `${founder.name}, ${founder.role}`}
-                  fill
-                  className="object-cover"
-                />
-              ) : localFounderExists ? (
-                <Image
-                  src="/images/founder/founder.jpg"
-                  alt={`${founder.name}, ${founder.role}`}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="gradient-fallback absolute inset-0" />
-              )}
+              <SanityImage
+                image={founder.image}
+                altFallback={`${founder.name}, ${founder.role}`}
+                className="object-cover"
+                priority
+              />
             </div>
             <div className="space-y-6">
               <div className="space-y-4">
